@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#151713">
+<title>Luxury Hotel Guest Experience</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+ --bg:#141612;
+ --panel:#20221c;
+ --gold:#c6a878;
+ --cream:#f3ecdf;
+ --muted:#a7a092;
+ --line:rgba(198,168,120,.24);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--cream);font-family:'DM Sans',sans-serif}
+button,a{font:inherit}
+a{text-decoration:none;color:inherit}
+
+.hero{
+ min-height:520px;
+ height:65vh;
+ max-height:720px;
+ position:relative;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-between;
+ background:
+ linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.1) 40%,#141612 100%),
+ var(--cover) center/cover;
+}
+
+.nav{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:28px 7%;
+}
+
+.logo{
+ font-family:'Cormorant Garamond',serif;
+ font-size:27px;
+ letter-spacing:4px;
+}
+
+.logo span{color:var(--gold)}
+.nav small{font-size:9px;letter-spacing:3px;color:#eee}
+
+.hero-content{text-align:center;padding:0 20px 95px}
+.eyebrow{font-size:10px;letter-spacing:5px;color:var(--gold);margin-bottom:20px}
+.hero h1{
+ font-family:'Cormorant Garamond',serif;
+ font-size:clamp(48px,9vw,90px);
+ font-weight:400;
+ line-height:1;
+}
+.hero-content p{font-size:12px;letter-spacing:2px;margin-top:22px;color:#e3dacb}
+
+.welcome{
+ text-align:center;
+ max-width:650px;
+ padding:5px 25px 40px;
+ margin:auto;
+}
+.welcome small{color:var(--gold);letter-spacing:4px;font-size:9px}
+.welcome h2{
+ font-family:'Cormorant Garamond',serif;
+ font-weight:400;
+ font-size:42px;
+ margin:12px 0;
+}
+.welcome p{font-size:12px;color:var(--muted);line-height:2}
+
+.container{max-width:1100px;margin:auto;padding:10px 24px 65px}
+.heading{display:flex;align-items:center;gap:15px;margin:15px 0 24px}
+.heading span{font-size:10px;letter-spacing:3px;color:var(--gold);white-space:nowrap}
+.heading:after{content:"";height:1px;background:var(--line);flex:1}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+
+.card{
+ min-height:145px;
+ background:linear-gradient(140deg,#24261f,#191b17);
+ border:1px solid var(--line);
+ padding:22px 19px;
+ cursor:pointer;
+ position:relative;
+ transition:.3s;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-between;
+}
+.card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.card-icon{font-size:23px;color:var(--gold);margin-bottom:15px}
+.card h3{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500}
+.card p{font-size:10px;color:var(--muted);margin-top:5px}
+.arrow{position:absolute;right:16px;bottom:20px;color:var(--gold)}
+
+.feature{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ border:1px solid var(--line);
+ margin-top:35px;
+}
+.feature-image{min-height:250px;background:center/cover var(--feature)}
+.feature-text{padding:35px;display:flex;flex-direction:column;justify-content:center}
+.feature-text small{color:var(--gold);letter-spacing:3px;font-size:9px}
+.feature-text h2{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;margin:13px 0}
+.feature-text p{font-size:12px;color:var(--muted);line-height:1.9}
+.feature-text button{
+ margin-top:20px;
+ width:fit-content;
+ padding:12px 20px;
+ background:transparent;
+ border:1px solid var(--gold);
+ color:var(--gold);
+ cursor:pointer;
+ font-size:10px;
+ letter-spacing:2px;
+}
+
+.contact{text-align:center;border-top:1px solid var(--line);padding:45px 20px}
+.contact h2{font:400 34px 'Cormorant Garamond',serif}
+.contact p{font-size:11px;color:var(--muted);margin:12px}
+.contact a{color:var(--gold);font-size:13px}
+footer{text-align:center;border-top:1px solid var(--line);padding:23px;color:#77766e;font-size:9px;letter-spacing:2px}
+
+.modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:20;
+ background:rgba(0,0,0,.83);
+ backdrop-filter:blur(8px);
+ justify-content:center;
+ align-items:center;
+ padding:18px;
+}
+.modal.show{display:flex}
+.modal-box{
+ width:100%;
+ max-width:420px;
+ background:#20221c;
+ border:1px solid var(--gold);
+ padding:38px 27px;
+ text-align:center;
+ position:relative;
+}
+.close{
+ position:absolute;
+ right:16px;
+ top:12px;
+ border:0;
+ background:none;
+ color:var(--muted);
+ font-size:27px;
+ cursor:pointer;
+}
+.modal-icon{font-size:30px;color:var(--gold);margin-bottom:14px}
+.modal-box h2{font:400 34px 'Cormorant Garamond',serif;margin-bottom:12px}
+.modal-box p{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:20px}
+.action{
+ display:inline-block;
+ background:var(--gold);
+ color:#171813;
+ padding:14px 22px;
+ font-size:10px;
+ letter-spacing:2px;
+ border:0;
+ cursor:pointer;
+}
+.wifi{
+ background:#141612;
+ padding:13px;
+ color:var(--gold);
+ margin:10px 0 15px;
+ letter-spacing:1px;
+ overflow-wrap:anywhere;
+}
+.wifi small{display:block;color:var(--muted);font-size:9px;margin-bottom:7px}
+
+@media(max-width:650px){
+ .hero{height:58vh;min-height:440px}
+ .nav{padding:23px 6%}
+ .logo{font-size:21px;letter-spacing:2px}
+ .grid{grid-template-columns:repeat(2,1fr);gap:9px}
+ .card{min-height:135px;padding:17px 13px}
+ .card h3{font-size:20px}
+ .feature{grid-template-columns:1fr}
+ .feature-image{min-height:190px}
+ .feature-text{padding:25px}
+ .welcome h2{font-size:35px}
+}
+@media(max-width:350px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+
+<header class="hero" id="hero">
+ <nav class="nav">
+  <div class="logo" id="logo">HOTEL <span>COLLECTION</span></div>
+  <small>GUEST EXPERIENCE</small>
+ </nav>
+ <div class="hero-content">
+  <div class="eyebrow">A PLACE TO REMEMBER</div>
+  <h1>Welcome.</h1>
+  <p id="heroSubtitle">DISCOVER A BEAUTIFUL WAY TO STAY</p>
+ </div>
+</header>
+
+<section class="welcome">
+ <small>YOUR STAY, YOUR EXPERIENCE</small>
+ <h2 id="welcomeTitle">Hoş Geldiniz</h2>
+ <p id="welcomeText">Konaklamanızı daha konforlu hale getirmek için ihtiyacınız olan tüm hizmetleri bir araya getirdik.</p>
+</section>
+
+<main class="container">
+ <div class="heading"><span>GUEST SERVICES · MİSAFİR HİZMETLERİ</span></div>
+ <div class="grid" id="services"></div>
+
+ <section class="feature">
+  <div class="feature-image" id="featureImage"></div>
+  <div class="feature-text">
+   <small>AN EXPERIENCE TO REMEMBER</small>
+   <h2 id="featureTitle">Moments of Pleasure.</h2>
+   <p id="featureText">Otelimizin özel hizmetlerini keşfedin.</p>
+   <button onclick="openService('menu')">EXPLORE MENU ↗</button>
+  </div>
+ </section>
+</main>
+
+<section class="contact">
+ <h2>We are here for you.</h2>
+ <p>Herhangi bir ihtiyacınız olduğunda bize ulaşabilirsiniz.</p>
+ <a id="receptionLink" href="#">RECEPTION</a>
+</section>
+
+<footer id="footer">LUXURY HOTEL · EXCEPTIONAL EXPERIENCE</footer>
+
+<div class="modal" id="modal" onclick="outsideClose(event)">
+ <div class="modal-box">
+  <button class="close" onclick="closeModal()">×</button>
+  <div class="modal-icon" id="mIcon">✧</div>
+  <h2 id="mTitle"></h2>
+  <p id="mText"></p>
+  <div id="mExtra"></div>
+  <a class="action" id="mButton" href="#" target="_blank">DISCOVER</a>
+ </div>
+</div>
+
+<script>
+
+/* ==========================================
+   OTEL BİLGİLERİ
+   HER OTELİN KENDİ ID NUMARASI VAR.
+   1 İLE 100 ARASINDA OTEL EKLEYEBİLİRSİN.
+========================================== */
+
+const HOTELS = {
+
+  1: {
+    name: "MAISON LUMIÈRE",
+    subtitle: "DISCOVER A BEAUTIFUL WAY TO STAY",
+    welcome: "Hoş Geldiniz",
+    welcomeText: "Konaklamanızı daha konforlu hale getirmek için tüm hizmetlerimizi sizin için bir araya getirdik.",
+
+    cover: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=2000&q=85",
+    featureImage: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=85",
+    featureTitle: "Moments of Pleasure.",
+    featureText: "Özel lezzetlerimizi ve restoranımızı keşfedin.",
+
+    instagram: "LİNKİ BURAYA YAPIŞTIR",
+    whatsapp: "LİNKİ BURAYA YAPIŞTIR",
+    wifiName: "WIFI ADINI BURAYA YAZ",
+    wifiPassword: "WIFI ŞİFRESİNİ BURAYA YAZ",
+    menu: "LİNKİ BURAYA YAPIŞTIR",
+    reception: "TELEFON NUMARASINI BURAYA YAZ",
+    google: "LİNKİ BURAYA YAPIŞTIR",
+    tripadvisor: "LİNKİ BURAYA YAPIŞTIR",
+    roomservice: "LİNKİ BURAYA YAPIŞTIR",
+    housekeeping: "LİNKİ BURAYA YAPIŞTIR",
+    transfer: "LİNKİ BURAYA YAPIŞTIR",
+    location: "LİNKİ BURAYA YAPIŞTIR",
+    breakfast: "KAHVALTI SAATİNİ BURAYA YAZ",
+    checkout: "CHECK-OUT SAATİNİ BURAYA YAZ",
+    about: "OTEL HAKKINDA BİLGİYİ BURAYA YAZ",
+    emergency: "ACİL DURUM BİLGİLERİNİ BURAYA YAZ"
+  },
+
+  2: {
+    name: "OTEL İSMİ BURAYA",
+    subtitle: "WELCOME TO OUR HOTEL",
+    welcome: "Hoş Geldiniz",
+    welcomeText: "OTELİN KARŞILAMA MESAJINI BURAYA YAZ",
+
+    cover: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=85",
+    featureImage: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=85",
+    featureTitle: "Discover Our Restaurant",
+    featureText: "RESTORAN AÇIKLAMASINI BURAYA YAZ",
+
+    instagram: "LİNKİ BURAYA YAPIŞTIR",
+    whatsapp: "LİNKİ BURAYA YAPIŞTIR",
+    wifiName: "WIFI ADINI BURAYA YAZ",
+    wifiPassword: "WIFI ŞİFRESİNİ BURAYA YAZ",
+    menu: "LİNKİ BURAYA YAPIŞTIR",
+    reception: "TELEFON NUMARASINI BURAYA YAZ",
+    google: "LİNKİ BURAYA YAPIŞTIR",
+    tripadvisor: "LİNKİ BURAYA YAPIŞTIR",
+    roomservice: "LİNKİ BURAYA YAPIŞTIR",
+    housekeeping: "LİNKİ BURAYA YAPIŞTIR",
+    transfer: "LİNKİ BURAYA YAPIŞTIR",
+    location: "LİNKİ BURAYA YAPIŞTIR",
+    breakfast: "KAHVALTI SAATİNİ BURAYA YAZ",
+    checkout: "CHECK-OUT SAATİNİ BURAYA YAZ",
+    about: "OTEL HAKKINDA BİLGİYİ BURAYA YAZ",
+    emergency: "ACİL DURUM BİLGİLERİNİ BURAYA YAZ"
+  }
+
+  /*
+  3. OTELİ EKLEMEK İÇİN:
+
+  2 NUMARALI OTELİN BLOĞUNU KOPYALA.
+  ALTINA VİRGÜL KOYARAK YAPIŞTIR.
+  BAŞTAKİ 2 NUMARASINI 3 YAP.
+
+  AYNI ŞEKİLDE 100'E KADAR DEVAM ET.
+  */
+
+};
+
+/* ==========================================
+   URL'DEN OTELİ BUL
+========================================== */
+
+const params = new URLSearchParams(window.location.search);
+const hotelId = Number(params.get("id") || 1);
+const hotel = HOTELS[hotelId];
+
+if (!hotel || hotelId < 1 || hotelId > 100) {
+ document.body.innerHTML = `
+ <div style="min-height:100vh;display:grid;place-items:center;text-align:center;padding:30px;color:#eee;background:#141612">
+ <div>
+ <h1 style="font-family:serif;font-size:40px">Hotel not found</h1>
+ <p style="color:#aaa;margin-top:15px">Bu otel için henüz bilgi tanımlanmamış.</p>
+ </div></div>`;
+ throw new Error("Hotel not configured");
+}
+
+/* ==========================================
+   SAYFAYI OTEL BİLGİLERİYLE DOLDUR
+========================================== */
+
+document.title = hotel.name + " | Guest Experience";
+
+document.getElementById("logo").innerHTML =
+ hotel.name.replace(/&/g,"&amp;").replace(/</g,"&lt;") +
+ ' <span>HOTEL</span>';
+
+document.getElementById("hero").style.setProperty(
+ "--cover",
+ `url("${hotel.cover}")`
+);
+
+document.getElementById("heroSubtitle").textContent = hotel.subtitle;
+document.getElementById("welcomeTitle").textContent = hotel.welcome;
+document.getElementById("welcomeText").textContent = hotel.welcomeText;
+document.getElementById("featureImage").style.backgroundImage =
+ `url("${hotel.featureImage}")`;
+document.getElementById("featureTitle").textContent = hotel.featureTitle;
+document.getElementById("featureText").textContent = hotel.featureText;
+document.getElementById("footer").textContent =
+ hotel.name + " · YOUR COMFORT IS OUR PRIORITY";
+
+const receptionLink = document.getElementById("receptionLink");
+receptionLink.href = hotel.reception.startsWith("+")
+ ? "tel:" + hotel.reception
+ : "tel:" + hotel.reception;
+receptionLink.textContent = hotel.reception;
+
+/* ==========================================
+   HİZMETLER
+========================================== */
+
+const SERVICES = [
+ ["instagram","◎","Instagram","Bizi sosyal medyada takip edin"],
+ ["whatsapp","◉","WhatsApp","Otel ile iletişime geçin"],
+ ["wifi","⌁","Wi-Fi","Ücretsiz kablosuz internet"],
+ ["menu","✧","Restaurant Menu","Yemek ve içecek menüsü"],
+ ["reception","♧","Reception","Resepsiyona ulaşın"],
+ ["google","☆","Google Reviews","Deneyiminizi paylaşın"],
+ ["tripadvisor","✧","Tripadvisor","Otelimizi değerlendirin"],
+ ["roomservice","♨","Room Service","Oda servisi talep edin"],
+ ["housekeeping","✦","Housekeeping","Temizlik ve havlu talebi"],
+ ["transfer","◇","Airport Transfer","Ulaşım ve transfer"],
+ ["location","⌖","Hotel Location","Otelin konumunu bulun"],
+ ["breakfast","☼","Breakfast Hours","Kahvaltı saatlerini öğrenin"],
+ ["checkout","◷","Check-out","Çıkış saati bilgisi"],
+ ["about","⌂","About Our Hotel","Otelimiz hakkında"],
+ ["emergency","+","Important Info","Önemli ve acil bilgiler"]
+];
+
+const grid = document.getElementById("services");
+
+SERVICES.forEach(item => {
+ const div = document.createElement("div");
+ div.className = "card";
+ div.innerHTML = `
+ <div>
+ <div class="card-icon">${item[1]}</div>
+ <h3>${item[2]}</h3>
+ <p>${item[3]}</p>
+ </div>
+ <span class="arrow">↗</span>
+ `;
+ div.addEventListener("click", () => openService(item[0]));
+ grid.appendChild(div);
+});
+
+/* ==========================================
+   MODAL VE BAĞLANTILAR
+========================================== */
+
+const CONTENT = {
+ instagram:["Instagram","Otelimizin sosyal medya hesabını keşfedin.","instagram"],
+ whatsapp:["WhatsApp","Sorularınız ve talepleriniz için bize ulaşın.","whatsapp"],
+ wifi:["Wi-Fi Access","İnternet bağlantısı için bilgiler aşağıdadır.","wifi"],
+ menu:["Restaurant Menu","Restoranımızın güncel menüsünü inceleyin.","menu"],
+ reception:["Reception","Resepsiyon ekibimize ulaşabilirsiniz.","reception"],
+ google:["Google Reviews","Deneyiminizi Google üzerinde paylaşın.","google"],
+ tripadvisor:["Tripadvisor","Otelimiz hakkındaki görüşlerinizi paylaşın.","tripadvisor"],
+ roomservice:["Room Service","Oda servisi talepleriniz için bize ulaşın.","roomservice"],
+ housekeeping:["Housekeeping","Oda temizliği ve ihtiyaçlarınız için talepte bulunun.","housekeeping"],
+ transfer:["Airport Transfer","Transfer ve ulaşım hakkında bilgi alın.","transfer"],
+ location:["Hotel Location","Otelimizin konumunu haritada görüntüleyin.","location"],
+ breakfast:["Breakfast Hours","Kahvaltı saatleri.","breakfast"],
+ checkout:["Check-out Information","Otelimizin çıkış saati bilgisi.","checkout"],
+ about:["About Our Hotel","Otelimiz hakkında bilgi.","about"],
+ emergency:["Important Information","Önemli ve acil durum bilgileri.","emergency"]
+};
+
+function openService(key) {
+
+ const info = CONTENT[key];
+ const value = hotel[key];
+
+ document.getElementById("mIcon").textContent = "✧";
+ document.getElementById("mTitle").textContent = info[0];
+ document.getElementById("mText").textContent = info[1];
+
+ const extra = document.getElementById("mExtra");
+ const button = document.getElementById("mButton");
+
+ extra.innerHTML = "";
+ button.style.display = "inline-block";
+ button.onclick = null;
+ button.removeAttribute("href");
+ button.removeAttribute("target");
+
+ if(key === "wifi") {
+
+  extra.innerHTML = `
+   <div class="wifi">
+    <small>NETWORK NAME</small>
+    ${escapeHTML(hotel.wifiName)}
+   </div>
+   <div class="wifi">
+    <small>NETWORK PASSWORD</small>
+    ${escapeHTML(hotel.wifiPassword)}
+   </div>
+  `;
+
+  button.textContent = "COPY PASSWORD";
+
+  button.onclick = async () => {
+   try {
+    await navigator.clipboard.writeText(hotel.wifiPassword);
+    button.textContent = "COPIED ✓";
+   } catch(e) {
+    button.textContent = "COPY NOT AVAILABLE";
+   }
+  };
+
+ } else if(key === "breakfast" || key === "checkout" ||
+           key === "about" || key === "emergency") {
+
+  button.style.display = "none";
+
+  extra.innerHTML = `
+   <div class="wifi">${escapeHTML(value)}</div>
+  `;
+
+ } else {
+
+  if(!value || value.includes("BURAYA")) {
+   button.textContent = "LINK NOT ADDED";
+   button.style.opacity = ".5";
+   button.onclick = e => e.preventDefault();
+  } else {
+   button.textContent = "OPEN / DISCOVER";
+   button.href = key === "reception" ? "tel:" + value : value;
+   button.target = key === "reception" ? "_self" : "_blank";
+  }
+
+ }
+
+ document.getElementById("modal").classList.add("show");
+}
+
+function escapeHTML(value) {
+ return String(value).replace(/[&<>"']/g, c => ({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+ }[c]));
+}
+
+function closeModal() {
+ document.getElementById("modal").classList.remove("show");
+}
+
+function outsideClose(event) {
+ if(event.target.id === "modal") closeModal();
+}
+
+document.addEventListener("keydown", e => {
+ if(e.key === "Escape") closeModal();
+});
+
+</script>
+</body>
+</html>
