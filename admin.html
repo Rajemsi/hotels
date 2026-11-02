@@ -1,0 +1,117 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Otel Yönetim Paneli</title><link rel="stylesheet" href="panel.css"></head>
+<body><main class="shell">
+<header class="top"><div><div class="brand">ÇINAR HOSPITALITY</div><div class="brandtitle">Yönetim Paneli</div><div id="who" class="muted">Yükleniyor...</div></div><button class="smallbtn" id="logout">Çıkış Yap</button></header>
+<div id="notice" class="message"></div>
+<section id="superArea" class="section" hidden>
+<h2>Süper Admin</h2><p>Tüm otelleri, başvuruları ve yönetici davetlerini yönet.</p>
+<div class="cards"><div class="card"><h3>Yeni otel + yönetici</h3>
+<label>Otel adı</label><input id="newHotelName">
+<label>Yönetici adı</label><input id="newAdminName">
+<label>Yönetici e-postası</label><input id="newAdminEmail" type="email">
+<button id="createHotel">Otel oluştur ve davet gönder</button>
+</div><div class="card"><h3>Bekleyen başvurular</h3><div id="applications">Yükleniyor...</div></div></div>
+<div class="section"><h2>Tüm oteller</h2><div id="allHotels">Yükleniyor...</div></div>
+</section>
+<section id="hotelArea" class="section" hidden>
+<h2>Otel bilgilerini düzenle</h2><p>Değişiklikler kaydedildiğinde NFC ile açılan misafir sayfasına yansır.</p>
+<form id="hotelForm">
+<div class="grid2">
+<div><label>Otel adı</label><input name="name" required></div>
+<div><label>Karşılama başlığı</label><input name="welcome_title"></div>
+<div><label>Kapak fotoğrafı URL</label><input name="cover_image" placeholder="https://..."></div>
+<div><label>Tanıtım fotoğrafı URL</label><input name="feature_image" placeholder="https://..."></div>
+<div><label>Instagram bağlantısı</label><input name="instagram_url"></div>
+<div><label>WhatsApp bağlantısı</label><input name="whatsapp_url"></div>
+<div><label>Wi-Fi adı</label><input name="wifi_name"></div>
+<div><label>Wi-Fi şifresi</label><input name="wifi_password"></div>
+<div><label>Menü PDF bağlantısı</label><input name="menu_url"></div>
+<div><label>Resepsiyon telefonu</label><input name="reception_phone"></div>
+<div><label>Google yorum bağlantısı</label><input name="google_reviews_url"></div>
+<div><label>Tripadvisor bağlantısı</label><input name="tripadvisor_url"></div>
+<div><label>Oda servisi bağlantısı</label><input name="room_service_url"></div>
+<div><label>Housekeeping bağlantısı</label><input name="housekeeping_url"></div>
+<div><label>Transfer bağlantısı</label><input name="transfer_url"></div>
+<div><label>Konum bağlantısı</label><input name="location_url"></div>
+<div><label>Kahvaltı saatleri</label><input name="breakfast_hours"></div>
+<div><label>Check-out bilgisi</label><input name="checkout_info"></div>
+</div>
+<label>Karşılama yazısı</label><textarea name="welcome_text" rows="3"></textarea>
+<label>Otel hakkında</label><textarea name="about_text" rows="3"></textarea>
+<label>Acil durum bilgileri</label><textarea name="emergency_info" rows="3"></textarea>
+<button>Değişiklikleri Kaydet</button>
+</form>
+<div class="message" id="saveStatus"></div>
+<p id="nfcLink"></p>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
+<script>
+(async()=>{
+const sb=window.getSupabase(), notice=document.getElementById('notice');
+const {data:{user}}=await sb.auth.getUser();
+if(!user){location.href='login.html';return;}
+document.getElementById('who').textContent=user.email;
+document.getElementById('logout').onclick=async()=>{await sb.auth.signOut();location.href='login.html';};
+const {data:profile,error:pe}=await sb.from('profiles').select('*').eq('id',user.id).single();
+if(pe||!profile||profile.approval_status!=='approved'){notice.textContent='Hesabınız henüz onaylanmamış veya erişiminiz bulunmuyor.';return;}
+
+if(profile.role==='super_admin'){
+ document.getElementById('superArea').hidden=false;
+ await loadApplications(); await loadHotels();
+ document.getElementById('createHotel').onclick=async()=>{
+  const payload={hotel_name:document.getElementById('newHotelName').value.trim(),full_name:document.getElementById('newAdminName').value.trim(),email:document.getElementById('newAdminEmail').value.trim()};
+  if(!payload.hotel_name||!payload.full_name||!payload.email){notice.textContent='Tüm alanları doldurun.';return;}
+  notice.textContent='Otel oluşturuluyor ve davet gönderiliyor...';
+  const {data,error}=await sb.functions.invoke('admin-invite-user',{body:payload});
+  notice.textContent=error?'İşlem başarısız: '+error.message:(data?.message||'İşlem tamamlandı. Davet e-postasını kontrol edin.');
+  await loadHotels();
+ };
+}else{
+ const {data:membership}=await sb.from('hotel_members').select('hotel_id').eq('user_id',user.id).limit(1).maybeSingle();
+ if(!membership){notice.textContent='Hesabınıza henüz otel atanmamış. Süper admin ile iletişime geçin.';return;}
+ const {data:hotel,error}=await sb.from('hotels').select('*').eq('id',membership.hotel_id).single();
+ if(error||!hotel){notice.textContent='Otel bilgileri yüklenemedi.';return;}
+ document.getElementById('hotelArea').hidden=false;
+ const form=document.getElementById('hotelForm');
+ Object.keys(hotel).forEach(k=>{if(form.elements[k])form.elements[k].value=hotel[k]??'';});
+ document.getElementById('nfcLink').textContent='NFC bağlantısı: '+location.origin+location.pathname.replace('admin.html','index.html')+'?id='+hotel.id;
+ form.onsubmit=async e=>{
+  e.preventDefault();const update={};
+  [...form.elements].forEach(el=>{if(el.name)update[el.name]=el.value.trim();});
+  const {error}=await sb.from('hotels').update(update).eq('id',hotel.id);
+  document.getElementById('saveStatus').textContent=error?'Kaydedilemedi: '+error.message:'Başarıyla kaydedildi.';
+ };
+}
+async function loadApplications(){
+ const {data,error}=await sb.from('hotel_applications').select('*').eq('status','pending').order('created_at');
+ const el=document.getElementById('applications');if(error){el.textContent=error.message;return;}
+ el.innerHTML='';
+ (data||[]).forEach(a=>{
+  const d=document.createElement('div');d.className='card';
+  const title=document.createElement('strong');title.textContent=a.hotel_name;
+  const p=document.createElement('p');p.textContent=a.contact_name+' · '+a.email+' · '+a.phone;
+  const b=document.createElement('button');b.className='smallbtn';b.textContent='Onayla ve otel oluştur';
+  b.onclick=async()=>{
+   const {error:he,data:hotel}=await sb.from('hotels').insert({name:a.hotel_name,slug:'hotel-'+a.id.slice(0,8)}).select().single();
+   if(he){notice.textContent=he.message;return;}
+   const {error:me}=await sb.from('hotel_members').insert({hotel_id:hotel.id,user_id:a.applicant_user_id});
+   if(me){notice.textContent=me.message;return;}
+   await sb.from('profiles').update({approval_status:'approved'}).eq('id',a.applicant_user_id);
+   await sb.from('hotel_applications').update({status:'approved',reviewed_at:new Date().toISOString()}).eq('id',a.id);
+   notice.textContent='Başvuru onaylandı. Otel yöneticisi artık giriş yapabilir.';
+   await loadApplications();await loadHotels();
+  };
+  d.append(title,p,b);el.append(d);
+ });
+ if(!data?.length)el.textContent='Bekleyen başvuru yok.';
+}
+async function loadHotels(){
+ const {data,error}=await sb.from('hotels').select('id,name,is_active,created_at').order('created_at',{ascending:false});
+ const el=document.getElementById('allHotels');if(error){el.textContent=error.message;return;}
+ const table=document.createElement('table');const tr=document.createElement('tr');
+ ['Otel','NFC ID','Durum'].forEach(t=>{const th=document.createElement('th');th.textContent=t;tr.append(th);});table.append(tr);
+ (data||[]).forEach(h=>{const r=document.createElement('tr');[h.name,h.id,h.is_active?'Aktif':'Pasif'].forEach(t=>{const td=document.createElement('td');td.textContent=t;r.append(td);});table.append(r);});
+ el.innerHTML='';el.append(table);
+}
+})();
+</script></body></html>

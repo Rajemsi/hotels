@@ -1,0 +1,13 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yönetici Girişi</title><link rel="stylesheet" href="panel.css"></head>
+<body><main class="auth"><div class="brand">ÇINAR <span>HOSPITALITY</span></div><h1>Yönetici Girişi</h1><p>Otelinizi yönetmek için hesabınıza giriş yapın.</p>
+<form id="loginForm"><label>E-posta</label><input id="email" type="email" required autocomplete="username"><label>Şifre</label><input id="password" type="password" required autocomplete="current-password"><button>Giriş Yap</button></form>
+<div id="message" class="message"></div><a href="register.html">Otel başvurusu oluştur</a></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
+<script>
+const sb=window.getSupabase();
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault(); const msg=document.getElementById('message'); msg.textContent='Giriş yapılıyor...';
+ const {error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+ if(error){msg.textContent=error.message;return;} location.href='admin.html';
+});
+</script></body></html>

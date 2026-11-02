@@ -1,0 +1,20 @@
+:root{--bg:#151713;--panel:#20231d;--gold:#c6a878;--text:#f2ecdf;--muted:#aaa394;--line:rgba(198,168,120,.23)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+a{color:var(--gold)}.auth{max-width:440px;margin:7vh auto;padding:35px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.auth.wide{max-width:600px}.brand{letter-spacing:3px;color:var(--gold);font-size:13px}.brand span{color:var(--text)}
+h1{font-family:Georgia,serif;font-weight:400;font-size:34px;margin:25px 0 8px}p{color:var(--muted);line-height:1.6;font-size:13px}
+label{display:block;font-size:12px;margin:17px 0 7px;color:var(--muted)}
+input,textarea,select{width:100%;padding:13px;background:#141612;color:var(--text);border:1px solid var(--line);border-radius:7px}
+button,.btn{display:inline-block;background:var(--gold);color:#171813;border:0;padding:13px 18px;border-radius:6px;font-weight:bold;cursor:pointer;text-decoration:none;margin-top:18px}
+form button{width:100%}.message{font-size:13px;color:var(--gold);margin:18px 0;line-height:1.6}
+.shell{max-width:1100px;margin:auto;padding:25px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:20px}
+.brandtitle{font:32px Georgia,serif}.muted{color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:22px 0}
+.card{background:var(--panel);border:1px solid var(--line);padding:20px;border-radius:10px}
+.card h3{font:23px Georgia,serif;margin:0 0 12px}.card p{margin:5px 0}
+.section{background:var(--panel);padding:22px;border:1px solid var(--line);border-radius:10px;margin:18px 0}
+.section h2{font:26px Georgia,serif;margin:0 0 10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:12px;border-bottom:1px solid var(--line)}
+.smallbtn{padding:8px 12px;margin:0;font-size:11px}.danger{background:#9c514b;color:white}
+@media(max-width:600px){.auth{margin:15px;padding:23px}.shell{padding:15px}.grid2{grid-template-columns:1fr}}

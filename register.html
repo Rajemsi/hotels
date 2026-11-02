@@ -1,0 +1,29 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Otel Başvurusu</title><link rel="stylesheet" href="panel.css"></head>
+<body><main class="auth wide"><div class="brand">ÇINAR <span>HOSPITALITY</span></div><h1>Otelinizi sisteme ekleyin</h1><p>Başvurunuz incelendikten sonra hesabınız etkinleştirilir.</p>
+<form id="registerForm">
+<label>Yetkili adı soyadı</label><input id="fullName" required>
+<label>Otel adı</label><input id="hotelName" required>
+<label>E-posta</label><input id="email" type="email" required>
+<label>Telefon</label><input id="phone" type="tel">
+<label>Web sitesi</label><input id="website" type="url" placeholder="https://">
+<label>Başvuru notu</label><textarea id="message" rows="3"></textarea>
+<label>Şifre</label><input id="password" type="password" minlength="8" required>
+<button>Başvuru Gönder</button></form><div id="status" class="message"></div><a href="login.html">Zaten hesabınız var mı? Giriş yapın</a></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
+<script>
+const sb=window.getSupabase();
+document.getElementById('registerForm').addEventListener('submit',async e=>{
+ e.preventDefault();const status=document.getElementById('status');status.textContent='Başvurunuz gönderiliyor...';
+ const full_name=document.getElementById('fullName').value.trim();
+ const email=document.getElementById('email').value.trim();
+ const {data,error}=await sb.auth.signUp({email,password:document.getElementById('password').value,options:{data:{
+  full_name,
+  hotel_name:document.getElementById('hotelName').value.trim(),
+  phone:document.getElementById('phone').value.trim(),
+  website:document.getElementById('website').value.trim(),
+  message:document.getElementById('message').value.trim()
+ }}});
+ if(error){status.textContent=error.message;return;}
+ status.textContent='Başvurunuz alındı. E-posta doğrulamasını tamamlayın. Başvurunuz yönetici paneline düşecek; onaydan sonra giriş yapabileceksiniz.';
+});
+</script></body></html>
